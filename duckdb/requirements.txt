@@ -1,0 +1,7 @@
+duckdb==0.9.2
+pandas==2.1.4
+pyarrow==14.0.1
+streamlit
+plotly
+fsspec
+s3fs
