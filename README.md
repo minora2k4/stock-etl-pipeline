@@ -1,44 +1,49 @@
 # Real-time Financial Data Pipeline
 
-## Project Overview
 
-This project is a comprehensive Big Data pipeline designed to ingest, process, store, and visualize real-time stock and cryptocurrency market data. It leverages a modern data stack including Apache Kafka, Apache Spark, MinIO (S3), DuckDB, and Streamlit.
+## 1. Project Overview
 
-The system streams live trade data from the Finnhub API via WebSocket, queues it in Kafka, processes it using Spark Structured Streaming, stores it as partitioned Parquet files in a Data Lake (MinIO), and provides a real-time analytics dashboard using Streamlit powered by DuckDB.
+This project implements an end-to-end Big Data engineering pipeline capable of ingesting, processing, storing, and visualizing real-time financial market data (Crypto & US Stocks). It demonstrates a modern "Lakehouse" architecture using open-source technologies to handle high-velocity WebSocket streams.
 
-## Architecture
+**Core Capabilities:**
+* **Ingestion:** Low-latency streaming from Finnhub.io via WebSocket.
+* **Buffering:** Decoupled data production and consumption using Apache Kafka.
+* **Processing:** Near real-time ETL using Apache Spark Structured Streaming.
+* **Storage:** Scalable Data Lake storage using MinIO (S3-compatible) with Parquet partitioning.
+* **Analytics:** Serverless SQL analysis on raw files using DuckDB.
+* **Visualization:** Interactive, auto-refreshing dashboard using Streamlit.
 
-1.  **Data Source**: Finnhub.io API (WebSocket).
-2.  **Ingestion Layer**: Python-based Kafka Producer connecting to WebSocket and publishing to the `stock-ticks` topic.
-3.  **Message Queue**: Apache Kafka (running with Zookeeper).
-4.  **Processing Layer**: Apache Spark Structured Streaming.
-    * Reads from Kafka.
-    * Performs schema enforcement and data transformation.
-    * Writes data to MinIO in Parquet format with partitioning (Date/Symbol).
-5.  **Storage Layer**: MinIO (Object Storage compatible with AWS S3).
-6.  **Serving Layer**: DuckDB (In-memory OLAP database) reading directly from Parquet files in MinIO.
-7.  **Visualization Layer**: Streamlit Dashboard for real-time monitoring, charts, and tape reading.
+---
 
-## Directory Structure
+## 2. System Architecture
 
-vnstock-pipeline/
-├── duckdb/
-│   ├── analytics.py          # Data access layer (DuckDB connection & SQL logic)
-│   ├── data_visualization.py # Streamlit UI application
-│   ├── Dockerfile            # Shared Docker image for Analytics & Dashboard
-│   └── requirements.txt      # Python dependencies for serving layer
-├── kafka/
-│   ├── config.py             # Configuration loader
-│   ├── producer.py           # Main WebSocket client & Kafka producer
-│   ├── utils.py              # Logging and data formatting utilities
-│   ├── Dockerfile            # Docker image for the Producer
-│   └── requirements.txt      # Dependencies for Producer
-├── spark/
-│   ├── processor.py          # Spark Structured Streaming job
-│   └── Dockerfile            # Custom Spark image (optional)
-├── .env                      # Environment variables (API Keys, Config)
-├── docker-compose.yml        # Orchestration for all services
-└── README.md                 # Project documentation
+The pipeline follows a linear data flow:
+
+<img width="1306" height="296" alt="image" src="https://github.com/user-attachments/assets/ec2f4a3e-a356-400d-b4ce-71b598095d4e" />
+
+
+---
+
+## 3. Data Schema
+
+### 3.1 Raw Input (WebSocket)
+Data received from Finnhub is in JSON format:
+```json
+{
+  "type": "trade",
+  "data": [
+    {
+      "p": 67000.50,  // Price
+      "s": "BINANCE:BTCUSDT",  // Symbol
+      "v": 0.005,  // Volume
+      "t": 1708500000000  // Timestamp (ms)
+    }
+  ]
+}
+```
+
+### 3.2 Processed Output (Data Lake)
+<img width="266" height="342" alt="image" src="https://github.com/user-attachments/assets/3632b472-1edc-41ee-9d6f-0728ccb6d8b4" />
 
 ## Prerequisites
 
