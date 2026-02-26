@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col, expr, to_timestamp, to_date
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 
-# Schema khớp 100% với Producer gửi lên
+# Schema khớp  với Producer gửi lên
 schema = StructType([
     StructField("event_time", StringType()),
     StructField("symbol", StringType()),
@@ -51,7 +51,7 @@ def run_spark_job():
                  .option("path", "s3a://warehouse/processed_trades")
                  .partitionBy("date_partition", "symbol")
                  .outputMode("append")
-                 .trigger(processingTime="5 seconds")  # Trigger 5s là tối ưu cho Parquet
+                 .trigger(processingTime="5 seconds")
                  .start())
 
         print(">>> SPARK PIPELINE RUNNING: Kafka -> processed_trades <<<")

@@ -1,9 +1,8 @@
 version: '3.8'
 
 services:
-  # ==========================================
   # 1. STORAGE LAYER (MinIO S3)
-  # ==========================================
+
   minio:
     image: minio/minio:latest
     container_name: minio
@@ -47,9 +46,8 @@ services:
       exit 0;
       "
 
-  # ==========================================
   # 2. INGESTION LAYER (Kafka)
-  # ==========================================
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
@@ -118,9 +116,7 @@ services:
       - .env
     restart: always
 
-  # ==========================================
   # 3. PROCESSING LAYER (Spark)
-  # ==========================================
   spark-master:
     build:
       context: .
@@ -155,9 +151,7 @@ services:
       --master spark://spark-master:7077 
       /opt/spark/work-dir/processor.py
 
-  # ==========================================
   # 4. SERVING LAYER
-  # ==========================================
   duckdb:
     build:
       context: ./duckdb
